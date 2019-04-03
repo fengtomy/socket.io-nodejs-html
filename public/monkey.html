@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Monkey Chat</title>
+  <script src="/socket.io.js"></script>
+  <script>
+    window.onload = function () {
+      var socket = io.connect('ws://localhost:3000');
+      document.getElementById('submit').onclick = sendTalk;
+
+      function sendTalk() {
+        var talkDoc = document.getElementById('talk');
+        var talk = talkDoc.value;
+        socket.emit('message', {message: talk, user: 'monkey'});
+        talkDoc.value = '';
+      }
+      socket.on('talkUnit', handleTalkUnit);
+
+      function handleTalkUnit(data) {
+        var doc = document.createElement('li');
+        doc.innerHTML = '<span>' + data.user + '</span>：<span>' + data.message + '</span>';
+        document.getElementById('talkList').appendChild(doc);
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <div>
+    <label>
+      Monkey:
+      <input type="text" id="talk" placeholder="write something you want to say" />
+    </label>
+    <div>
+      <button id="submit">Submit that you saied.</button>
+    </div>
+  </div>
+  <div class="talk-container">
+    <ul class="talk-list" id="talkList"></ul>
+  </div>
+</body>
+
+</html>
